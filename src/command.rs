@@ -115,15 +115,15 @@ impl Command {
                     }
                     None => println!("{}: not found", cmd),
                 }
-                // if is_builtin(cmd, config) {
-                //     println!("{} is a shell {}", cmd.red(), "builtin".red());
-                // } else {
-                //     println!("{} not found", cmd);
-                // }
             }
 
             CommandName::Other { name: _, path } => {
-                println!("{}", path.display());
+                let mut command = process::Command::new(path);
+                command.args(&self.args);
+
+                let output = command.output().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                println!("{}", stdout);
             }
         }
     }
