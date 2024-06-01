@@ -113,7 +113,7 @@ impl Command {
                             }
                         }
                     }
-                    None => println!("{} {} not found", cmd, "command".red()),
+                    None => println!("{}: not found", cmd),
                 }
                 // if is_builtin(cmd, config) {
                 //     println!("{} is a shell {}", cmd.red(), "builtin".red());
