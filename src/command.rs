@@ -54,11 +54,14 @@ impl CommandName {
             "echo" => Some(CommandName::Echo),
             "type" => Some(CommandName::Type),
             command => {
-                let path = config.path.iter().find(|path| path.join(command).exists());
+                let path = config
+                    .path
+                    .iter()
+                    .find_map(|path| path.join(command).exists().then(|| path.join(command)));
 
                 path.map(|path| CommandName::Other {
                     name: command.to_string(),
-                    path: path.to_path_buf(),
+                    path,
                 })
             }
         }
