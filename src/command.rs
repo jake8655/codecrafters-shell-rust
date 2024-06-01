@@ -1,5 +1,10 @@
 use colored::Colorize;
-use std::{fmt, path::PathBuf, process};
+use std::{
+    fmt,
+    io::{self, Write},
+    path::PathBuf,
+    process,
+};
 
 use crate::config::Config;
 
@@ -123,7 +128,8 @@ impl Command {
 
                 let output = command.output().unwrap();
                 let stdout = String::from_utf8_lossy(&output.stdout);
-                println!("{}", stdout);
+                print!("{}", stdout);
+                io::stdout().flush().unwrap();
             }
         }
     }
