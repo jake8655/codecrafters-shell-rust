@@ -18,17 +18,7 @@ impl FromStr for Command {
 }
 
 fn main() {
-    print_prompt();
-
-    let input = read_line();
-    let trimmed = input.trim();
-
-    let command = Command::from_str(trimmed);
-
-    match command {
-        Ok(_cmd) => {}
-        Err(_) => println!("{}: {} not found", trimmed, "command".red()),
-    }
+    repl();
 }
 
 fn print_prompt() {
@@ -40,4 +30,18 @@ fn read_line() -> String {
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
     input
+}
+
+fn repl() -> ! {
+    loop {
+        print_prompt();
+        let input = read_line();
+        let trimmed = input.trim();
+        let command = Command::from_str(trimmed);
+
+        match command {
+            Ok(_cmd) => {}
+            Err(_) => println!("{}: {} not found", trimmed, "command".red()),
+        }
+    }
 }
