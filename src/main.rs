@@ -30,10 +30,14 @@ impl Command {
     }
 }
 
+#[derive(PartialEq)]
 enum CommandName {
     Exit,
     Echo,
+    Type,
 }
+
+const BUILTINS: [CommandName; 3] = [CommandName::Exit, CommandName::Echo, CommandName::Type];
 
 impl FromStr for CommandName {
     type Err = ();
@@ -42,9 +46,18 @@ impl FromStr for CommandName {
         match s {
             "exit" => Ok(CommandName::Exit),
             "echo" => Ok(CommandName::Echo),
+            "type" => Ok(CommandName::Type),
             _ => Err(()),
         }
     }
+}
+
+fn is_builtin(cmd: &str) -> bool {
+    let Ok(command_name) = CommandName::from_str(cmd) else {
+        return false;
+    };
+
+    BUILTINS.contains(&command_name)
 }
 
 impl Command {
@@ -65,6 +78,19 @@ impl Command {
             CommandName::Echo => {
                 let text = self.args.join(" ");
                 println!("{}", text);
+            }
+
+            CommandName::Type => {
+                let Some(cmd) = self.args.first() else {
+                    eprintln!("{}: type requires a command", "type".red());
+                    return;
+                };
+
+                if is_builtin(cmd) {
+                    println!("{} is a shell {}", cmd.red(), "builtin".red());
+                } else {
+                    println!("{} not found", cmd);
+                }
             }
         }
     }
