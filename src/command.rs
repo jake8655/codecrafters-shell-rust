@@ -38,6 +38,7 @@ pub enum CommandName {
     Exit,
     Echo,
     Type,
+    Pwd,
     Other { name: String, path: PathBuf },
 }
 
@@ -47,6 +48,7 @@ impl fmt::Display for CommandName {
             CommandName::Exit => write!(f, "exit"),
             CommandName::Echo => write!(f, "echo"),
             CommandName::Type => write!(f, "type"),
+            CommandName::Pwd => write!(f, "pwd"),
             CommandName::Other { name, path: _ } => write!(f, "{}", name),
         }
     }
@@ -58,6 +60,7 @@ impl CommandName {
             "exit" => Some(CommandName::Exit),
             "echo" => Some(CommandName::Echo),
             "type" => Some(CommandName::Type),
+            "pwd" => Some(CommandName::Pwd),
             command => {
                 let path = config
                     .path
@@ -120,6 +123,10 @@ impl Command {
                     }
                     None => println!("{}: not found", cmd),
                 }
+            }
+
+            CommandName::Pwd => {
+                println!("{}", std::env::current_dir().unwrap().display());
             }
 
             CommandName::Other { name: _, path } => {
