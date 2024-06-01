@@ -17,7 +17,7 @@ impl FromStr for Command {
         let mut split = s.split_whitespace();
         let cmd = split.next().unwrap();
 
-        let args = split.map(|arg| arg.to_string()).collect();
+        let args = split.map(|arg| arg.trim().to_string()).collect();
         let command_name = CommandName::from_str(cmd)?;
 
         Ok(Command::new(command_name, args))
@@ -32,6 +32,7 @@ impl Command {
 
 enum CommandName {
     Exit,
+    Echo,
 }
 
 impl FromStr for CommandName {
@@ -40,6 +41,7 @@ impl FromStr for CommandName {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "exit" => Ok(CommandName::Exit),
+            "echo" => Ok(CommandName::Echo),
             _ => Err(()),
         }
     }
@@ -58,6 +60,11 @@ impl Command {
                 };
 
                 process::exit(status);
+            }
+
+            CommandName::Echo => {
+                let text = self.args.join(" ");
+                println!("{}", text);
             }
         }
     }
