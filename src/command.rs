@@ -39,6 +39,7 @@ pub enum CommandName {
     Echo,
     Type,
     Pwd,
+    Cd,
     Other { name: String, path: PathBuf },
 }
 
@@ -49,6 +50,7 @@ impl fmt::Display for CommandName {
             CommandName::Echo => write!(f, "echo"),
             CommandName::Type => write!(f, "type"),
             CommandName::Pwd => write!(f, "pwd"),
+            CommandName::Cd => write!(f, "cd"),
             CommandName::Other { name, path: _ } => write!(f, "{}", name),
         }
     }
@@ -61,6 +63,7 @@ impl CommandName {
             "echo" => Some(CommandName::Echo),
             "type" => Some(CommandName::Type),
             "pwd" => Some(CommandName::Pwd),
+            "cd" => Some(CommandName::Cd),
             command => {
                 let path = config
                     .path
@@ -137,6 +140,25 @@ impl Command {
                 let stdout = String::from_utf8_lossy(&output.stdout);
                 print!("{}", stdout);
                 io::stdout().flush().unwrap();
+            }
+
+            CommandName::Cd => {
+                let Some(path) = self.args.first() else {
+                    eprintln!("{}: cd requires a path", "cd".red());
+                    return;
+                };
+
+                let path = PathBuf::from(path);
+
+                if path.exists() {
+                    std::env::set_current_dir(path).unwrap();
+                } else {
+                    eprintln!(
+                        "cd: {}: no such {} or directory",
+                        path.display(),
+                        "file".red()
+                    );
+                }
             }
         }
     }
