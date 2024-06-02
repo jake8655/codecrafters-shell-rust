@@ -153,11 +153,7 @@ impl Command {
                 if path.exists() {
                     std::env::set_current_dir(path).unwrap();
                 } else {
-                    eprintln!(
-                        "cd: {}: no such {} or directory",
-                        path.display(),
-                        "file".red()
-                    );
+                    eprintln!("{}: No such {} or directory", path.display(), "file".red());
                 }
             }
         }
