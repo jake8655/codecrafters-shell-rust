@@ -143,10 +143,11 @@ impl Command {
             }
 
             CommandName::Cd => {
-                let Some(path) = self.args.first() else {
-                    eprintln!("{}: cd requires a path", "cd".red());
-                    return;
-                };
+                let home_path_str = config.home.display().to_string();
+
+                let path = self.args.first().unwrap_or(&home_path_str);
+
+                let path = path.trim().replace('~', &home_path_str);
 
                 let path = PathBuf::from(path);
 

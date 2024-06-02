@@ -1,7 +1,6 @@
 use colored::Colorize;
 use std::env;
 use std::io::{self, Write};
-use std::str::FromStr;
 
 mod command;
 use command::Command;
@@ -10,8 +9,9 @@ mod config;
 use config::Config;
 
 fn main() {
-    let path_arg = env::var("PATH").expect("PATH not set");
-    let config = Config::from_str(&path_arg).expect("invalid PATH");
+    let path_env = env::var("PATH").expect("PATH not set");
+    let home_env = env::var("HOME").expect("HOME not set");
+    let config = Config::from_str(&path_env, &home_env);
 
     repl(config);
 }
@@ -38,7 +38,7 @@ fn repl(config: Config) -> ! {
             Some(cmd) => {
                 cmd.execute(&config);
             }
-            None => println!("{}: {} not found", trimmed, "command".red()),
+            None => eprintln!("{}: {} not found", trimmed, "command".red()),
         }
     }
 }

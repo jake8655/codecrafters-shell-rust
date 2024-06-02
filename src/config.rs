@@ -1,22 +1,21 @@
-use std::{path::PathBuf, str::FromStr};
+use std::path::PathBuf;
 
 pub struct Config {
     pub path: Vec<PathBuf>,
+    pub home: PathBuf,
 }
 
 impl Config {
-    pub fn new(path: Vec<PathBuf>) -> Self {
-        Config { path }
+    pub fn new(path: Vec<PathBuf>, home: PathBuf) -> Self {
+        Config { path, home }
     }
-}
 
-impl FromStr for Config {
-    type Err = ();
+    pub fn from_str(path: &str, home: &str) -> Self {
+        let path_splits = path.split(':');
+        let path = path_splits.map(PathBuf::from).collect();
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let split = s.split(':');
-        let path = split.map(PathBuf::from).collect();
+        let home = PathBuf::from(home);
 
-        Ok(Config::new(path))
+        Config::new(path, home)
     }
 }
